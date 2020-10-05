@@ -63,3 +63,10 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+
+
+
+
+
+docker run -t -v /Volumes/CRUCIAL_SSD/code/nominatim-docker/nominatim:/data nominatim sh /app/init.sh /Volumes/CRUCIAL_SSD/code/nominatim-docker/nominatimdata/mexico-latest.osm postgresdata 4
+docker run --restart=always -p 6432:5432 -p 7070:8080 -d --name nominatim -v /Volumes/CRUCIAL_SSD/code/nominatim-docker/nominatimdata/postgresdata:/var/lib/postgresql/12/main nominatim bash /app/start.sh

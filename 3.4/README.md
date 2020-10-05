@@ -1,14 +1,13 @@
 # Nominatim Docker (Nominatim version 3.4)
 
-1. Build
-  ```
-  docker build -t nominatim .
-  ```
-2. Copy <your_country>.osm.pbf to a local directory (i.e. /home/me/nominatimdata)
+1. in 3.4 folder: docker build -t nominatim .
+  
+2. data folder: curl https://download.geofabrik.de/north-america/mexico-latest.osm.pbf --output mexico-latest.osm.pbf
+                curl  https://www.nominatim.org/data/wikimedia-importance.sql.gz --output wikimedia-importance.sql.gz
 
 3. Initialize Nominatim Database
   ```
-  docker run -t -v /home/me/nominatimdata:/data nominatim  sh /app/init.sh /data/<your_country>.osm.pbf postgresdata 4
+  docker run -t -v /data/nominatim-data:/data nominatim  sh /app/init.sh /data/mexico-latest.osm.pbf postgresdata 8
   ```
   Where 4 is the number of threads to use during import. In general the import of data in postgres is a very time consuming
   process that may take hours or days. If you run this process on a multiprocessor system make sure that it makes the best use
@@ -18,7 +17,8 @@
 4. After the import is finished the /home/me/nominatimdata/postgresdata folder will contain the full postgress binaries of
    a postgis/nominatim database. The easiest way to start the nominatim as a single node is the following:
    ```
-   docker run --restart=always -p 6432:5432 -p 7070:8080 -d --name nominatim -v /home/me/nominatimdata/postgresdata:/var/lib/postgresql/11/main nominatim bash /app/start.sh
+   docker run --restart=always -p 6432:5432 -p 7070:8080 -d --name nominatim -v /data/nominatim-data/postgresdata:/var/lib/postgresql/11/main nominatim bash /app/start.sh
+
    ```
 
 5. Advanced configuration. If necessary you can split the osm installation into a database and restservice layer
@@ -64,3 +64,12 @@ The following command will keep your database constantly up to date:
 If you have imported multiple country extracts and want to keep them
 up-to-date, have a look at the script in
 [issue #60](https://github.com/openstreetmap/Nominatim/issues/60).
+
+
+# Prod Deployment
+
+
+cd /code/nominatim-docker/3.4
+docker build -t nominatim .
+docker run -t -v /data/nominatim-data:/data nominatim  sh /app/init.sh /data/mexico-latest.osm.pbf postgresdata 8
+docker run --restart=always -p 6432:5432 -p 7070:8080 -d --name nominatim -v /data/nominatim-data/postgresdata:/var/lib/postgresql/11/main nominatim bash /app/start.sh
