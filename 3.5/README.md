@@ -1,3 +1,29 @@
+
+Update from master repo
+1. git fetch origin
+   git merge origin/master
+
+ Download the data 
+2. data folder: curl https://download.geofabrik.de/north-america/mexico-latest.osm.pbf --output mexico-latest.osm.pbf
+                curl  https://www.nominatim.org/data/wikimedia-importance.sql.gz --output wikimedia-importance.sql.gz
+                curl https://www.nominatim.org/data/wikipedia_article.sql.bin --output wikipedia_article.sql.bin
+                curl https://www.nominatim.org/data/wikipedia_redirect.sql.bin --output wikipedia_redirect.sql.bin 
+                gzip -d wikimedia-importance.sql.gz
+
+Build the container
+3. docker build --no-cache --pull --rm -t dataplor/nominatim .
+
+Initialize Database
+4. docker run -t -v /Volumes/CRUCIAL_SSD/code/nominatim-docker/nominatim-data:/data dataplor/nominatim  sh /app/init.sh /data/mexico-latest.osm.pbf postgresdata 8
+
+Start data container
+5. docker run --restart=always -p 6432:5432 -d -v /Volumes/CRUCIAL_SSD/code/nominatim-docker/nominatim-data/postgresdata:/var/lib/postgresql/11/main dataplor/nominatim sh /app/startpostgres.sh
+
+
+
+
+
+
 # Nominatim Docker (Nominatim version 3.5)
 
 1. Build
